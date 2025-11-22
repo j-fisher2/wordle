@@ -4,14 +4,23 @@ import './App.css'
 const WORD_LENGTH = 5;
 const MAX_GUESSES = 6;
 
-const ANSWER = "APPLE";
+const WORDS = ['APPLE', 'BEACH', 'CHAIR', 'DANCE', 'EAGLE', 'FLAME', 'GRAPE', 'HEART', 'IDEAL', 'JELLY', 'KNIFE', 'LEMON', 'MANGO', 'NIGHT', 'OCEAN', 'PLANT', 'QUEEN', 'RIVER', 'STONE', 'TIGER', 'URBAN', 'VIVID', 'WATCH', 'XENON', 'YOUTH', 'ZEBRA', 'ANGRY', 'BRICK', 'CABLE', 'DRIVE', 'EXTRA', 'FAITH', 'GIANT', 'HAPPY', 'INDEX', 'JOINT', 'KARMA', 'LIGHT', 'MARCH', 'NOVEL', 'OASIS', 'PEARL', 'QUICK', 'RALLY', 'SUGAR', 'TABLE', 'UNION', 'VOTER', 'WATER', 'YIELD', 'ACTOR', 'BAKER', 'CANDY', 'DREAM', 'EAGER', 'FANCY', 'GLOBE', 'HOUSE', 'IMAGE', 'JUICE', 'KARMA', 'LABEL', 'MUSIC', 'NOBLE', 'OTHER', 'PRIDE', 'QUIET', 'ROAST', 'SMILE', 'TREND', 'ALERT', 'BLESS', 'CLIMB', 'DRILL', 'EARTH', 'FROST', 'GRILL', 'HOVER', 'IDEAL', 'JEWEL', 'KNEEL', 'LAUGH', 'MODEL', 'NERVE', 'OFFER', 'PARTY', 'QUAKE', 'ROUGH', 'SHINE', 'TOUGH', 'AWAKE', 'BRAVE', 'CRANE', 'DOUGH', 'EVERY', 'FRAME', 'GREAT', 'HAPPY', 'INNER', 'JOINT']
+
+const initializeAnswer = (wordList = WORDS) => {
+  const word = wordList[Math.floor(Math.random() * wordList.length)];
+  console.log("ANSWER - ")
+  console.log(word)
+  return word
+}
 
 const INIT_GAME_STATE = {
+  ANSWER: initializeAnswer(),
   guesses: [], // eg. [{ word: "GUESS", result: [ "miss", "present", "miss", "hit", "miss" ] }]
   currentGuess: "",
   message: "",
   hasWon: false,
-  hasLost: false
+  hasLost: false,
+  offline: true, // with server integration - use this to load answer word locally and play game entirely client-sided
 }
 
 const GameOver = ({message, resetGameStateCallback}) => {
@@ -27,10 +36,12 @@ function App() {
   const [gameState, setGameState] = useState(INIT_GAME_STATE)
 
   const resetGameState = () => {
-    setGameState(INIT_GAME_STATE)
+    const newGameState = INIT_GAME_STATE;
+    newGameState.ANSWER = initializeAnswer();
+    setGameState(newGameState);
   }
 
-  function evaluateGuess(guess, answer=ANSWER) {
+  function evaluateGuess(guess, answer=gameState.ANSWER) {
     const result = Array(WORD_LENGTH).fill("miss");
     const answerLetters = answer.split("");
     const guessLetters = guess.split("");
@@ -72,10 +83,10 @@ function App() {
     const newGuesses = [...gameState.guesses, { word: guess, result }];
     setGameState({...gameState, guesses: newGuesses, message: "",currentGuess: ""})
 
-    if (guess === ANSWER) {
+    if (guess === gameState.ANSWER) {
       setGameState({...gameState, message: "You win! 🎉", hasWon: true})
     } else if (newGuesses.length >= MAX_GUESSES) {
-      setGameState({...gameState, message: `Out of guesses! Answer was ${ANSWER}.`, hasLost: true})
+      setGameState({...gameState, message: `Out of guesses! Answer was ${gameState.ANSWER}.`, hasLost: true})
     }
   }
 
