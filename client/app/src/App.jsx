@@ -6,11 +6,29 @@ const MAX_GUESSES = 6;
 
 const ANSWER = "APPLE";
 
+const INIT_GAME_STATE = {
+  guesses: [], // eg. [{ word: "GUESS", result: [ "miss", "present", "miss", "hit", "miss" ] }]
+  currentGuess: "",
+  message: "",
+  hasWon: false,
+  hasLost: false
+}
+
+const GameOver = ({message, resetGameStateCallback}) => {
+  return (
+    <div>
+      <h1>{message}</h1>
+      <button onClick={resetGameStateCallback}>Play Again</button>
+    </div>
+  )
+}
+
 function App() {
-  const [guesses, setGuesses] = useState([]);        // eg. [{ word: "GUESS", result: [ "miss", "present", "miss", "hit", "miss" ] }]
-  const [currentGuess, setCurrentGuess] = useState("");
-  const [message, setMessage] = useState("");
-  const [hasWon, setHasWon] = useState(false);
+  const [gameState, setGameState] = useState(INIT_GAME_STATE)
+
+  const resetGameState = () => {
+    setGameState(INIT_GAME_STATE)
+  }
 
   function evaluateGuess(guess, answer=ANSWER) {
     const result = Array(WORD_LENGTH).fill("miss");
@@ -38,7 +56,7 @@ function App() {
   }
 
   function evaluateGuessSubmission() {
-    const guess = currentGuess.toUpperCase();
+    const guess = gameState.currentGuess.toUpperCase();
 
     if (guess.length !== WORD_LENGTH) {
       setMessage(`Guess must be ${WORD_LENGTH} letters.`);
@@ -51,28 +69,25 @@ function App() {
     }
 
     const result = evaluateGuess(guess);
-    const newGuesses = [...guesses, { word: guess, result }];
-    setGuesses(newGuesses);
-    setCurrentGuess("");
-    setMessage("");
+    const newGuesses = [...gameState.guesses, { word: guess, result }];
+    setGameState({...gameState, guesses: newGuesses, message: "",currentGuess: ""})
 
     if (guess === ANSWER) {
-      setMessage("You win! 🎉");
-      setHasWon(true);
+      setGameState({...gameState, message: "You win! 🎉", hasWon: true})
     } else if (newGuesses.length >= MAX_GUESSES) {
-      setMessage(`Out of guesses! Answer was ${ANSWER}.`);
+      setGameState({...gameState, message: `Out of guesses! Answer was ${ANSWER}.`, hasLost: true})
     }
   }
 
   return (
     <div className="container">
-      {!hasWon &&
+      {!gameState.hasWon && !gameState.hasLost &&
         <div className="in-progress">
           <h1>Wordle</h1>
 
           <div className="grid">
             {Array.from({ length: MAX_GUESSES }).map((_, row) => {
-              const guessObj = guesses[row];
+              const guessObj = gameState.guesses[row];
               const letters = guessObj ? guessObj.word.split("") : [];
               return (
                 <div key={row} className="row">
@@ -94,22 +109,19 @@ function App() {
           <input
             type="text"
             maxLength={WORD_LENGTH}
-            value={currentGuess}
-            onChange={(e) => setCurrentGuess(e.target.value.toUpperCase())}
+            value={gameState.currentGuess}
+            onChange={(e) => setGameState({...gameState, currentGuess: e.target.value.toUpperCase()})}
             onKeyDown={(e) => e.key === "Enter" && evaluateGuessSubmission()}
             placeholder="Enter guess"
           />
 
           <button onClick={evaluateGuessSubmission}>Submit</button>
 
-          {message && <p className="message">{message}</p>}
+          {gameState.message && <p className="message">{gameState.message}</p>}
         </div>
       }
-      {hasWon && 
-        <div>
-          <h1>{message}</h1>
-          <button>Play Again</button>
-        </div>
+      {(gameState.hasWon || gameState.hasLost) && 
+        <GameOver message={gameState.message} resetGameStateCallback={resetGameState}/>
       }
     </div>
   );
