@@ -1,3 +1,5 @@
+**Author:** Justin Fisher - justinfisher340@gmail.com
+
 ## Task 1: Normal wordle
     Reference: https://www.nytimes.com/games/wordle/index.html
     The game will select a 5-letter word (aka. answer) from a predefined list (configurable), all
@@ -19,3 +21,12 @@
             rounds
         3. The player can be identified as lose if they failed to guess the answer after the max
             allowed rounds
+
+## Task 2: Client-server wordle
+
+    Based on task 1, modify the solution to support the server / client model.
+    The scoring rule will be the same as task 1.
+    The solution is expected:
+        1. To have expectation of task 1
+        2. Client side will not know the answer before the client guessed correctly or game over.
+        3. Server side will have input validation.
