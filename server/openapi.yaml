@@ -1,0 +1,156 @@
+openapi: 3.1.0
+info:
+  title: Wordle API
+  version: 1.0.0
+  description: API for a client-server Wordle game.
+
+servers:
+  - url: http://localhost:5101/api
+    description: Local development server
+
+paths:
+  /game:
+    post:
+      summary: Create a new game
+      description: Generates a new game with a random word and returns a gameId.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                difficulty:
+                  type: string
+                  enum: [normal, hard] # TBD - hard to denote host-cheating mode
+                  description: Optional difficulty level
+                  default: normal
+      responses:
+        '201':
+          description: Game created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  gameId:
+                    type: string
+                    example: abc123
+                  wordLength:
+                    type: integer
+                    example: 5
+                  maxAttempts:
+                    type: integer
+                    example: 6
+
+  /game/{gameId}/guess:
+    post:
+      summary: Submit a guess for a game
+      description: Verifies a guess against the word and returns the result for each letter.
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          description: Unique ID for the game
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                guess:
+                  type: string
+                  description: Player's guessed word
+                  example: APPLE
+      responses:
+        '200':
+          description: Guess evaluated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  guess:
+                    type: string
+                  result:
+                    type: array
+                    items:
+                      type: string
+                      enum: [miss, present, hit] # hit ~ correct letter + position, present ~ letter in word, incorrect position
+                    description: Evaluation for each letter
+                    example: [ "miss", "present", "miss", "hit", "miss" ]
+                  remainingAttempts:
+                    type: integer
+                    example: 5
+                  gameOver:
+                    type: boolean
+                    example: false
+        '404':
+          description: Game not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Game not found
+        '400':
+          description: Invalid request (e.g., wrong length)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Guess must be 5 letters long
+
+  /game/{gameId}:
+    get:
+      summary: Get game state
+      description: Returns the current state of the game, including past guesses and remaining attempts.
+      parameters:
+        - name: gameId
+          in: path
+          required: true
+          description: Unique ID for the game
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Current game state
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  gameId:
+                    type: string
+                  pastGuesses:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        guess:
+                          type: string
+                        result:
+                          type: array
+                          items:
+                            type: string
+                            enum: [miss, present, hit]
+                  remainingAttempts:
+                    type: integer
+        '404':
+          description: Game not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Game not found
