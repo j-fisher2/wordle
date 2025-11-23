@@ -79,7 +79,7 @@ paths:
                     type: array
                     items:
                       type: string
-                      enum: [miss, present, hit] # hit ~ correct letter + position, present ~ letter in word, incorrect position
+                      enum: [miss, present, hit] # hit - correct letter + position, present - letter in word, incorrect position
                     description: Evaluation for each letter
                     example: [ "miss", "present", "miss", "hit", "miss" ]
                   remainingAttempts:
@@ -141,7 +141,7 @@ paths:
                           type: array
                           items:
                             type: string
-                            enum: [miss, present, hit]
+                            enum: [miss, present, hit] # per-letter of guess
                   remainingAttempts:
                     type: integer
         '404':
