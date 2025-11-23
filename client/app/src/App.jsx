@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import './App.css'
 
-const WORD_LENGTH = 5;
-const MAX_GUESSES = 6;
+export const CONFIG = {
+  MAX_GUESSES: 6,
+  WORD_LENGTH: 5,
+  WORDS: ['APPLE', 'BEACH', 'CHAIR', 'DANCE', 'EAGLE', 'FLAME', 'GRAPE', 'HEART', 'IDEAL', 'JELLY', 'KNIFE', 'LEMON', 'MANGO', 'NIGHT', 'OCEAN', 'PLANT', 'QUEEN', 'RIVER', 'STONE', 'TIGER', 'URBAN', 'VIVID', 'WATCH', 'XENON', 'YOUTH', 'ZEBRA', 'ANGRY', 'BRICK', 'CABLE', 'DRIVE', 'EXTRA', 'FAITH', 'GIANT', 'HAPPY', 'INDEX', 'JOINT', 'KARMA', 'LIGHT', 'MARCH', 'NOVEL', 'OASIS', 'PEARL', 'QUICK', 'RALLY', 'SUGAR', 'TABLE', 'UNION', 'VOTER', 'WATER', 'YIELD', 'ACTOR', 'BAKER', 'CANDY', 'DREAM', 'EAGER', 'FANCY', 'GLOBE', 'HOUSE', 'IMAGE', 'JUICE', 'KARMA', 'LABEL', 'MUSIC', 'NOBLE', 'OTHER', 'PRIDE', 'QUIET', 'ROAST', 'SMILE', 'TREND', 'ALERT', 'BLESS', 'CLIMB', 'DRILL', 'EARTH', 'FROST', 'GRILL', 'HOVER', 'IDEAL', 'JEWEL', 'KNEEL', 'LAUGH', 'MODEL', 'NERVE', 'OFFER', 'PARTY', 'QUAKE', 'ROUGH', 'SHINE', 'TOUGH', 'AWAKE', 'BRAVE', 'CRANE', 'DOUGH', 'EVERY', 'FRAME', 'GREAT', 'HAPPY', 'INNER', 'JOINT']
+};
 
-const WORDS = ['APPLE', 'BEACH', 'CHAIR', 'DANCE', 'EAGLE', 'FLAME', 'GRAPE', 'HEART', 'IDEAL', 'JELLY', 'KNIFE', 'LEMON', 'MANGO', 'NIGHT', 'OCEAN', 'PLANT', 'QUEEN', 'RIVER', 'STONE', 'TIGER', 'URBAN', 'VIVID', 'WATCH', 'XENON', 'YOUTH', 'ZEBRA', 'ANGRY', 'BRICK', 'CABLE', 'DRIVE', 'EXTRA', 'FAITH', 'GIANT', 'HAPPY', 'INDEX', 'JOINT', 'KARMA', 'LIGHT', 'MARCH', 'NOVEL', 'OASIS', 'PEARL', 'QUICK', 'RALLY', 'SUGAR', 'TABLE', 'UNION', 'VOTER', 'WATER', 'YIELD', 'ACTOR', 'BAKER', 'CANDY', 'DREAM', 'EAGER', 'FANCY', 'GLOBE', 'HOUSE', 'IMAGE', 'JUICE', 'KARMA', 'LABEL', 'MUSIC', 'NOBLE', 'OTHER', 'PRIDE', 'QUIET', 'ROAST', 'SMILE', 'TREND', 'ALERT', 'BLESS', 'CLIMB', 'DRILL', 'EARTH', 'FROST', 'GRILL', 'HOVER', 'IDEAL', 'JEWEL', 'KNEEL', 'LAUGH', 'MODEL', 'NERVE', 'OFFER', 'PARTY', 'QUAKE', 'ROUGH', 'SHINE', 'TOUGH', 'AWAKE', 'BRAVE', 'CRANE', 'DOUGH', 'EVERY', 'FRAME', 'GREAT', 'HAPPY', 'INNER', 'JOINT']
 
-const initializeAnswer = (wordList = WORDS) => {
+const initializeAnswer = (wordList = CONFIG.WORDS) => {
   const word = wordList[Math.floor(Math.random() * wordList.length)];
   console.log("ANSWER - ")
   console.log(word)
@@ -42,11 +44,11 @@ function App() {
   }
 
   function evaluateGuess(guess, answer=gameState.ANSWER) {
-    const result = Array(WORD_LENGTH).fill("miss");
+    const result = Array(CONFIG.WORD_LENGTH).fill("miss");
     const answerLetters = answer.split("");
     const guessLetters = guess.split("");
 
-    for (let i = 0; i < WORD_LENGTH; i++) {
+    for (let i = 0; i < CONFIG.WORD_LENGTH; i++) {
       if (guessLetters[i] === answerLetters[i]) {
         result[i] = "hit";
         answerLetters[i] = null;
@@ -54,7 +56,7 @@ function App() {
     }
 
     // Second pass → mark presents
-    for (let i = 0; i < WORD_LENGTH; i++) {
+    for (let i = 0; i < CONFIG.WORD_LENGTH; i++) {
       if (result[i] === "hit") continue;
 
       const idx = answerLetters.indexOf(guessLetters[i]);
@@ -69,8 +71,8 @@ function App() {
   function evaluateGuessSubmission() {
     const guess = gameState.currentGuess.toUpperCase();
 
-    if (guess.length !== WORD_LENGTH) {
-      setMessage(`Guess must be ${WORD_LENGTH} letters.`);
+    if (guess.length !== CONFIG.WORD_LENGTH) {
+      setMessage(`Guess must be ${CONFIG.WORD_LENGTH} letters.`);
       return;
     }
 
@@ -85,7 +87,7 @@ function App() {
 
     if (guess === gameState.ANSWER) {
       setGameState({...gameState, message: "You win! 🎉", hasWon: true})
-    } else if (newGuesses.length >= MAX_GUESSES) {
+    } else if (newGuesses.length >= CONFIG.MAX_GUESSES) {
       setGameState({...gameState, message: `Out of guesses! Answer was ${gameState.ANSWER}.`, hasLost: true})
     }
   }
@@ -97,12 +99,12 @@ function App() {
           <h1>Wordle</h1>
 
           <div className="grid">
-            {Array.from({ length: MAX_GUESSES }).map((_, row) => {
+            {Array.from({ length: CONFIG.MAX_GUESSES }).map((_, row) => {
               const guessObj = gameState.guesses[row];
               const letters = guessObj ? guessObj.word.split("") : [];
               return (
                 <div key={row} className="row">
-                  {Array.from({ length: WORD_LENGTH }).map((_, col) => {
+                  {Array.from({ length: CONFIG.WORD_LENGTH }).map((_, col) => {
                     const letter = letters[col] || "";
                     const status = guessObj?.result[col];
 
@@ -119,7 +121,7 @@ function App() {
 
           <input
             type="text"
-            maxLength={WORD_LENGTH}
+            maxLength={CONFIG.WORD_LENGTH}
             value={gameState.currentGuess}
             onChange={(e) => setGameState({...gameState, currentGuess: e.target.value.toUpperCase()})}
             onKeyDown={(e) => e.key === "Enter" && evaluateGuessSubmission()}
