@@ -10,8 +10,6 @@ export const CONFIG = {
 
 const initializeAnswer = (wordList = CONFIG.WORDS) => {
   const word = wordList[Math.floor(Math.random() * wordList.length)];
-  console.log("ANSWER - ")
-  console.log(word)
   return word
 }
 
