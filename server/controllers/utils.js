@@ -23,4 +23,23 @@ const evaluateGuess = (guess, answer, wordLength) => {
     return result;
 }
 
-module.exports = { evaluateGuess }
+const validateSchema = (schema) => {
+    return (req, res, next) => {
+        try {
+            req.data = schema.parse(req.body);
+            console.log(req.data);
+            next();
+        } catch (err){
+            if (err.message) {
+                return res.status(400).json({
+                        message: err.issues.map(issue => issue.message),
+                    });
+                }
+            return res.status(500).json({
+                message: "Internal Server Error"
+            });
+        }
+    }
+}
+
+module.exports = { evaluateGuess, validateSchema }
