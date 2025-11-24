@@ -35,7 +35,8 @@ paths:
                 properties:
                   gameId:
                     type: string
-                    example: abc123
+                    format: uuid
+                    example: b2ccc4e7-a3a3-477c-ba2f-845c1643d717
                   wordLength:
                     type: integer
                     example: 5
