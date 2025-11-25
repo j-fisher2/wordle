@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
+import { GAME_CONFIG } from "./config";
 
 const GameContext = createContext(null);
 
@@ -26,7 +27,7 @@ export const GameProvider = ({ children }) => {
                 console.error("Failed to fetch game:", err);
             }
         } else {
-            const offlineState = { ...defaultOfflineState, gameWord: "APPLE" };
+            const offlineState = { ...defaultOfflineState, gameWord: GAME_CONFIG.WORDS[Math.floor(Math.random() * GAME_CONFIG.WORDS.length)]};
             setGameState(offlineState);
         }
   };
