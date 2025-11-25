@@ -43,7 +43,7 @@ export default function Game({ evaluateGuessSubmission, gameState ,setGameState,
                 placeholder="Enter guess"
             />
 
-            <button onClick={async () => await evaluateGuessSubmission(currentGuess, gameState.gameWord || null, gameState.wordLength, isOnline, setGameState, gameState)}>Submit</button>
+            <button style={{ marginLeft: "1rem" }} onClick={async () => await evaluateGuessSubmission(currentGuess, gameState.gameWord || null, gameState.wordLength, isOnline, setGameState, gameState)}>Submit</button>
 
             {gameState?.message && <p className="message">{gameState?.message}</p>}
             </div>
