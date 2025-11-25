@@ -64,15 +64,12 @@ export default async function evaluateGuessSubmission(guess, answer, wordLength,
 
     const result = await evaluateGuess(guess,answer,wordLength,online, API_ENDPOINT);
 
-    // move this into caller logic to set state after?
     const newGuesses = [...gameState.pastGuesses, { guess: guess, result: result.result }];
-    setGameState({...gameState, pastGuesses: newGuesses, message: "",currentGuess: ""})
-    console.log(gameState.pastGuesses);
+    setGameState({...gameState, pastGuesses: newGuesses, message: "",currentGuess: "", status: result.gameStatus })
 
-
-    if ((!online && guess === gameState.ANSWER) || (online && result.gameStatus === "WIN")) {
-        setGameState({...gameState, message: "You win! 🎉", hasWon: true})
-    } else if (newGuesses.length >= gameState.maxAttempts) {
-        setGameState({...gameState, message: "Out of guesses!", hasLost: true, status: "LOSS"})
+    if ((!online && guess === gameState.gameWord) || (online && result.gameStatus === "WIN")) {
+        setGameState({...gameState, message: "You win! 🎉", hasWon: true, status: result.gameStatus})
+    } else if ((!online && newGuesses.length >= gameState.maxAttempts) || (online && result.gameStatus === "LOSS")) {
+        setGameState({...gameState, message: "Out of guesses!", status: result.gameStatus })
     }
 }
