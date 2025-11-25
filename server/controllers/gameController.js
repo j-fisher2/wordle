@@ -30,11 +30,11 @@ const guessWord = (req, res) => {
 
   const game = fetchGame(gameId);
   if(!game || game == {}){
-    return res.json({undefined: "Game does not exist."});
+    return res.status(404).json({message: "Game not found."});
   }
   if (guess.length !== game.wordLength) {
     return res.status(400).json({
-      error: `Guess must be exactly ${game.wordLength} letters long.`
+      message: `Guess must be ${game.wordLength} letters long.`
     });
   }
 
