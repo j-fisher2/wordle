@@ -15,3 +15,8 @@
   display: inline-block;
   margin-top: 3rem;
 }
+
+.offline-select *{
+    display: block;
+    margin-top: 4rem;
+}
