@@ -22,10 +22,10 @@ async function evaluateGuess(guess, answer, wordLength, online, APIEndpoint) {
                 answerLetters[idx] = null;
             }
         }
-        return {result: result};
+        const hasWon = result.every(el => el === "hit");
+        return {result: result, gameStatus: hasWon ? "WIN" : "IN_PROGRESS"};
     }
     else {
-        // fetch result from api endpoint here
         try {
             const res = await fetch(APIEndpoint, {
                 method: "POST",
@@ -43,11 +43,6 @@ async function evaluateGuess(guess, answer, wordLength, online, APIEndpoint) {
 }
 
 export default async function evaluateGuessSubmission(guess, answer, wordLength, online, setGameState, gameState) {
-    console.log("HELLO")
-    console.log(guess);
-    console.log(answer);
-    console.log(wordLength);
-    console.log(online);
 
     if (guess.length !== gameState.wordLength) {
         const message = `Guess must be ${gameState.wordLength} letters.`;
@@ -65,11 +60,7 @@ export default async function evaluateGuessSubmission(guess, answer, wordLength,
     const result = await evaluateGuess(guess,answer,wordLength,online, API_ENDPOINT);
 
     const newGuesses = [...gameState.pastGuesses, { guess: guess, result: result.result }];
-    setGameState({...gameState, pastGuesses: newGuesses, message: "",currentGuess: "", status: result.gameStatus })
+    const gameStatus = online ? result.gameStatus : (newGuesses.length >= gameState.maxAttempts ? "LOSS" : result.gameStatus == "WIN" ? "WIN" : "IN_PROGRESS")
+    setGameState({...gameState, pastGuesses: newGuesses, message: gameStatus === "WIN" ? "You win! 🎉" : gameStatus === "LOSS" ? "Out of guesses!" : "",currentGuess: "", status: gameStatus })
 
-    if ((!online && guess === gameState.gameWord) || (online && result.gameStatus === "WIN")) {
-        setGameState({...gameState, message: "You win! 🎉", hasWon: true, status: result.gameStatus})
-    } else if ((!online && newGuesses.length >= gameState.maxAttempts) || (online && result.gameStatus === "LOSS")) {
-        setGameState({...gameState, message: "Out of guesses!", status: result.gameStatus })
-    }
 }
