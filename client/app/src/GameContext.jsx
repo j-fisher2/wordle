@@ -8,6 +8,7 @@ const defaultOfflineState = {
   maxAttempts: 6,
   pastGuesses: [],
   status: "IN_PROGRESS",
+  message: "",
 };
 
 export const GameProvider = ({ children }) => {
