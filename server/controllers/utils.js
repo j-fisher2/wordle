@@ -1,3 +1,5 @@
+const {baseGameObject} = require('../validators/schemas');
+
 const evaluateGuess = (guess, answer, wordLength) => {
     const result = Array(wordLength).fill("miss");
     const answerLetters = answer.split("");
@@ -23,7 +25,32 @@ const evaluateGuess = (guess, answer, wordLength) => {
     return result;
 }
 
-const validateSchema = (schema) => {
+const evaluateGameStatus = (game) => {
+    try {
+        baseGameObject.parse(game);
+    }
+    catch (err){
+        return -1;
+    }
+
+    const pastGuesses = game.pastGuesses || [];
+    const maxAttempts = game.maxAttempts;
+    const latestGuessEvaluation = pastGuesses[pastGuesses.length - 1].result;
+
+    if(latestGuessEvaluation.every(val => val === "hit")){
+        return "WIN";
+    }
+    else if(pastGuesses.length < maxAttempts){
+        return "IN_PROGRESS";
+    }
+    else if(pastGuesses.length === maxAttempts){
+        return "LOSS";
+    }
+
+}
+
+// todo - isolate into middleware directory
+const validateSchemaMiddleware = (schema) => {
     return (req, res, next) => {
         try {
             req.data = schema.parse(req.body);
@@ -42,4 +69,4 @@ const validateSchema = (schema) => {
     }
 }
 
-module.exports = { evaluateGuess, validateSchema }
+module.exports = { evaluateGuess, validateSchemaMiddleware, evaluateGameStatus }
