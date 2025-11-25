@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  server:
+    build:
+      context: ../server
+      dockerfile: server.Dockerfile
+    command: ["node", "server.js"]
+    ports:
+      - "5101:5101"
+    environment:
+      - NODE_ENV=development
+
+  client:
+    build:
+      context: ../client/app
+      dockerfile: client.Dockerfile
+    ports:
+      - "5713:5713"
+    environment:
+      - NODE_ENV=development
