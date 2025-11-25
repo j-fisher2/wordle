@@ -11,11 +11,11 @@ const fetchGame = (gameId) => {
 const createGame = (req, res) => {
   const gameId = uuidv4();
   const gameWord = WORDS[Math.floor(Math.random() * WORDS.length)]
-  const game = {gameWord: gameWord, wordLength: WORD_LENGTH, maxAttempts: GUESSES_PER_GAME, status: "IN_PROGRESS"}
+  const game = {gameWord: gameWord, wordLength: WORD_LENGTH, maxAttempts: GUESSES_PER_GAME, status: "IN_PROGRESS", pastGuesses: []}
 
   gameStore.set(gameId, game);
 
-  return res.json({ gameId: gameId, wordLength: WORD_LENGTH, maxAttempts: GUESSES_PER_GAME });
+  return res.json({ gameId: gameId, wordLength: WORD_LENGTH, maxAttempts: GUESSES_PER_GAME, status: game.status, pastGuesses: game.pastGuesses });
 };
 
 const guessWord = (req, res) => {
@@ -53,7 +53,7 @@ const guessWord = (req, res) => {
   game.pastGuesses = [...(game.pastGuesses || []),{guess: guess, result: guessEvaluation}]
   game.status = evaluateGameStatus(game);
   gameStore.set(game);
-  res.json({guess: guess, gameId: gameId, evaluation: guessEvaluation, remainingAttempts: remainingAttempts - 1, gameStatus: game.status})
+  res.json({guess: guess, gameId: gameId, result: guessEvaluation, remainingAttempts: remainingAttempts - 1, gameStatus: game.status})
 }
  
 module.exports = { createGame, guessWord };

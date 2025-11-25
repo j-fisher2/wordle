@@ -43,6 +43,12 @@ paths:
                   maxAttempts:
                     type: integer
                     example: 6
+                  status:
+                    type: string
+                    example: "IN_PROGRESS"
+                  pastGuesses:
+                    type: object
+                    
 
   /game/{gameId}/guess:
     post:
