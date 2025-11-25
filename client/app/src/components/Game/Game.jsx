@@ -9,7 +9,7 @@ export default function Game({ evaluateGuessSubmission, gameState ,setGameState,
 
     return (
         <div className="container">
-        {(gameState?.status === "IN_PROGRESS" || !gameState?.status )&&
+        {(gameState?.status === "IN_PROGRESS" || !gameState?.status ) &&
             <div className="in-progress">
             <h1>Wordle</h1>
 
@@ -48,7 +48,7 @@ export default function Game({ evaluateGuessSubmission, gameState ,setGameState,
             {gameState?.message && <p className="message">{gameState?.message}</p>}
             </div>
         }
-        {gameState.status === "LOSS" && <GameOver message={gameState.message} setGameState={setGameState}/>}
+        {(gameState.status === "LOSS" || gameState.status === "WIN") && <GameOver message={gameState.message} setGameState={setGameState}/>}
         </div>
     );
 }
