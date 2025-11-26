@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 import { GAME_CONFIG } from "./config";
+import { toast } from "sonner";
 
 const GameContext = createContext(null);
 
@@ -29,7 +30,7 @@ export const GameProvider = ({ children }) => {
             }
         } else {
             if(difficultyLevel === "HARD"){
-              alert("Hard is available in online mode only!");
+              toast.error("Hard is available in online mode only!");
               return;
             }
             const offlineState = { ...defaultOfflineState, gameWord: GAME_CONFIG.WORDS[Math.floor(Math.random() * GAME_CONFIG.WORDS.length)]};
