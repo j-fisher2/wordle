@@ -19,7 +19,7 @@ const Checkbox = ({ label, checked, onChange }) => {
 const MainMenu = ({ onStartGame, online, setOnline }) => (
     <div className='container'>
             <h1 className="title">Play Wordle</h1>
-            <img src="/Wordle_Logo.svg" width="60rem"/>
+            <img src="/Wordle_Logo.svg" width="70rem"/>
             <button className="button" onClick={onStartGame}>
                 Start Game
             </button>
