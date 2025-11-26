@@ -11,4 +11,8 @@ const baseGameObject = z.object({
   status: z.enum(["IN_PROGRESS", "WIN", "LOSS"])
 });
 
-module.exports = {guessBodySchema, baseGameObject}
+const createGameSchema = z.object({
+  difficulty: z.enum(["NORMAL", "HARD"])
+});
+
+module.exports = {guessBodySchema, baseGameObject, createGameSchema}
