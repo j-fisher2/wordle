@@ -10,6 +10,7 @@ const defaultOfflineState = {
   pastGuesses: [],
   status: "IN_PROGRESS",
   message: "",
+  difficulty: "NORMAL"
 };
 
 export const GameProvider = ({ children }) => {
@@ -17,16 +18,20 @@ export const GameProvider = ({ children }) => {
   const [online, setOnline] = useState(true);
   const GAME_API_ENDPOINT = `${import.meta.env.VITE_API_URL}/game`
 
-    const startGame = async (mode) => {
+    const startGame = async (mode, difficultyLevel) => {
         if (mode === "online") {
             try {
-                const res = await fetch(GAME_API_ENDPOINT, {method: "POST"});
+                const res = await fetch(GAME_API_ENDPOINT, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({difficulty: difficultyLevel})});
                 const data = await res.json();
                 setGameState(data);
             } catch (err) {
                 console.error("Failed to fetch game:", err);
             }
         } else {
+            if(difficultyLevel === "HARD"){
+              alert("Hard is available in online mode only!");
+              return;
+            }
             const offlineState = { ...defaultOfflineState, gameWord: GAME_CONFIG.WORDS[Math.floor(Math.random() * GAME_CONFIG.WORDS.length)]};
             setGameState(offlineState);
         }
