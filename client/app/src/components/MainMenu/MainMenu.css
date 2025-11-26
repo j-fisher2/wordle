@@ -19,3 +19,7 @@
     display: block;
     margin-top: 3rem;
 }
+
+.difficulty-select * {
+    display: block;
+}
