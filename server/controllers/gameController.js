@@ -12,6 +12,8 @@ const createGame = (req, res) => {
   const gameId = uuidv4();
   const gameWord = WORDS[Math.floor(Math.random() * WORDS.length)];
   const difficulty = req.body.difficulty;
+  const hostPlayerId = uuidv4();
+
   const game = {
     gameWord: gameWord,
     wordLength: WORD_LENGTH,
@@ -20,6 +22,7 @@ const createGame = (req, res) => {
     pastGuesses: [],
     difficulty: difficulty,
     candidateWords: difficulty === "HARD" ? WORDS : [],
+    players: [hostPlayerId], // host player id always first, players.length > 1 -> implicit multiplayer mode
   };
   gameStore.set(gameId, game);
 
@@ -30,18 +33,14 @@ const createGame = (req, res) => {
     status: game.status,
     pastGuesses: game.pastGuesses,
     difficulty: game.difficulty,
+    players: game.players,
+    playerId: hostPlayerId
   });
 };
 
 const guessWord = (req, res) => {
   const guess = req.body.guess;
   const gameId = req.params.gameId;
-
-  if (!isUuid(gameId)) {
-    return res.status(400).json({
-      message: "Invalid game id.",
-    });
-  }
 
   const game = fetchGame(gameId);
   if (!game || game == {}) {
@@ -93,12 +92,6 @@ const guessWord = (req, res) => {
 
 const getGame = (req, res) => {
   const gameId = req.params.gameId;
-  if (!isUuid(gameId)) {
-    return res.status(400).json({
-      message: "Invalid game id.",
-    });
-  }
-
   const game = fetchGame(gameId);
   if (!game || game == {}) {
     return res.status(404).json({ message: "Game not found." });
