@@ -63,7 +63,22 @@ const guessWord = (req, res) => {
   gameStore.set(game);
   res.json({guess: guess, gameId: gameId, result: guessEvaluation, remainingAttempts: remainingAttempts - 1, gameStatus: game.status})
 }
+
+const getGame = (req, res) => {
+  const gameId = req.params.gameId;
+  if(! isUuid(gameId)){
+    return res.status(400).json({
+        message: "Invalid game id."
+    });
+  }
+
+  const game = fetchGame(gameId);
+  if(!game || game == {}){
+    return res.status(404).json({message: "Game not found."});
+  }
+  return res.json({gameId: gameId, pastGuesses: game.pastGuesses, remainingAttempts: game.remainingAttempts, difficulty: game.difficulty})
+}
  
-module.exports = { createGame, guessWord };
+module.exports = { createGame, guessWord, getGame };
 
 

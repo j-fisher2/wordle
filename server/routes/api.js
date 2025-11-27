@@ -8,4 +8,6 @@ router.post('/game', validateSchemaMiddleware(createGameSchema),createGame);
 
 router.post('/game/:gameId/guess', validateSchemaMiddleware(guessBodySchema), guessWord);
 
+router.get('/game/:gameId', getGame);
+
 module.exports = router;
