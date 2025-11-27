@@ -1,7 +1,8 @@
 const gameStore = require("../store/games");
 const { WORDS, WORD_LENGTH, GUESSES_PER_GAME } = require("../config/config");
 const { v4: uuidv4, validate: isUuid } = require("uuid");
-const { evaluateGuess, evaluateGameStatus, cheatEvaluate } = require("./utils");
+const { evaluateGuess, evaluateGameStatus, cheatEvaluate, isPlayersTurn } = require("./utils");
+const { pl } = require("zod/v4/locales");
 
 // abstract function - update to use centralized data/key-value store
 const fetchGame = (gameId) => {
@@ -39,7 +40,7 @@ const createGame = (req, res) => {
 };
 
 const guessWord = (req, res) => {
-  const guess = req.body.guess;
+  const {guess, playerId} = req.body;
   const gameId = req.params.gameId;
 
   const game = fetchGame(gameId);
@@ -50,6 +51,11 @@ const guessWord = (req, res) => {
     return res.status(400).json({
       message: `Guess must be ${game.wordLength} letters long.`,
     });
+  }
+  if(!game.players.includes(playerId) || !isPlayersTurn(playerId, game.pastGuesses, game.players)){
+    return res.status(401).json({
+      message: "Player is not allowed to guess in this game or turn"
+    })
   }
 
   const remainingAttempts = game.maxAttempts - (game.pastGuesses?.length || 0);
@@ -77,7 +83,7 @@ const guessWord = (req, res) => {
 
   game.pastGuesses = [
     ...(game.pastGuesses || []),
-    { guess: guess, result: guessEvaluation },
+    { guess: guess, result: guessEvaluation, playerId: playerId },
   ];
   game.status = evaluateGameStatus(game);
   gameStore.set(game);
@@ -104,4 +110,21 @@ const getGame = (req, res) => {
   });
 };
 
-module.exports = { createGame, guessWord, getGame };
+const joinGame = (req, res) => {
+  const gameId = req.params.gameId;
+  const joiningPlayerId = uuidv4();
+  const game = fetchGame(gameId);
+  if (!game || game == {}) {
+    return res.status(404).json({ message: "Game not found." });
+  }
+  if(game.players.length > 1){
+    return res.status(409).json({message: "Game already has two players."})
+  }
+
+  game.players.push(joiningPlayerId);
+
+  return res.json({playerId: joiningPlayerId, gameId: gameId, pastGuesses: game.pastGuesses, remainingAttempts: game.remainingAttempts, difficulty: game.difficulty, players: game.players})
+  
+}
+
+module.exports = { createGame, guessWord, getGame, joinGame };
