@@ -49,6 +49,46 @@ const evaluateGameStatus = (game) => {
 
 }
 
+function patternScore(pattern) {
+  let hits = 0;
+  let presents = 0;
+  for (const p of pattern) {
+    if (p === "hit") hits++;
+    else if (p === "present") presents++;
+  }
+  return hits * 10 + presents;
+}
+
+
+function cheatEvaluate(guess, candidates, wordLength) {
+  const buckets = {};
+
+  for (const candidate of candidates) {
+    const pattern = evaluateGuess(guess, candidate, wordLength);
+    const key = pattern.join(",");
+
+    if (!buckets[key]) {
+      buckets[key] = { pattern, words: [] };
+    }
+    buckets[key].words.push(candidate);
+  }
+
+  let bestPattern = null;
+  let bestWords = null;
+  let bestScore = Infinity;
+
+  for (const { pattern, words } of Object.values(buckets)) {
+    const score = patternScore(pattern);
+    if (score < bestScore) {
+      bestScore = score;
+      bestPattern = pattern;
+      bestWords = words;
+    }
+  }
+
+  return { pattern: bestPattern, newCandidates: bestWords };
+}
+
 // todo - isolate into middleware directory
 const validateSchemaMiddleware = (schema) => {
     return (req, res, next) => {
@@ -69,4 +109,4 @@ const validateSchemaMiddleware = (schema) => {
     }
 }
 
-module.exports = { evaluateGuess, validateSchemaMiddleware, evaluateGameStatus }
+module.exports = { evaluateGuess, validateSchemaMiddleware, evaluateGameStatus, cheatEvaluate }
