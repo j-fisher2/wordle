@@ -152,6 +152,9 @@ paths:
                             enum: [miss, present, hit] # per-letter of guess
                   remainingAttempts:
                     type: integer
+                  difficulty:
+                    type: string
+                    enum: [NORMAL, HARD]
         '404':
           description: Game not found
           content:
