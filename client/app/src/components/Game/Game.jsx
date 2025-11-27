@@ -3,10 +3,7 @@ import GameOver from "../GameOver/GameOver";
 
 export default function Game({ evaluateGuessSubmission, gameState ,setGameState, isOnline}){ // these should be props as they will differ from client side game vs client server game
     const [currentGuess, setCurrentGuess] = useState("");
-    const resetGameState = () => {
-        setGameState(null);
-    }
-
+    
     return (
         <div className="container">
         {(gameState?.status === "IN_PROGRESS" || !gameState?.status ) &&
