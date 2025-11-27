@@ -48,6 +48,13 @@ paths:
                     example: "IN_PROGRESS"
                   pastGuesses:
                     type: object
+                  players:
+                    type: array
+                    items:
+                      type: string
+                  playerId:
+                    type: string
+                    format: uuid
 
   /game/{gameId}/guess:
     post:
@@ -115,6 +122,16 @@ paths:
                   message:
                     type: string
                     example: Guess must be 5 letters long
+        "401":
+          description: Player is not authorized to perform this action
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Player is not allowed to guess in this game or turn
 
   /game/{gameId}:
     get:
@@ -164,3 +181,64 @@ paths:
                   message:
                     type: string
                     example: Game not found
+
+  /game/{gameId}/join:
+    post:
+      summary: Join an existing game
+      description: >
+        Creates a temporary playerId for a user joining an existing game
+        and returns it. If the game is full or does not exist, return an error.
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Unique ID of the game session to join.
+      requestBody:
+        required: false
+      responses:
+        "200":
+          description: Player joined successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  playerId:
+                    type: string
+                    format: uuid
+                    example: "bd444899-4851-4530-90ef-aa53ca025c01"
+                  game: 
+                    type: object
+                    properties:
+                      gameId:
+                        type: string
+                      pastGuesses:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            guess:
+                              type: string
+                            result:
+                              type: array
+                              items:
+                                type: string
+                                enum: [miss, present, hit] # per-letter of guess
+                      remainingAttempts:
+                        type: integer
+                      difficulty:
+                        type: string
+                        enum: [NORMAL, HARD]
+                      players:
+                        type: array
+                        items:
+                          type: string
+                          format: uuid
+
+        "404":
+          description: Game not found.
+        "409":
+          description: Game already has two players.
