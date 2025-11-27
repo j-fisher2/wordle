@@ -5,7 +5,6 @@ services:
     build:
       context: ../server
       dockerfile: server.Dockerfile
-    command: ["node", "server.js"]
     ports:
       - "5101:5101"
     environment:
