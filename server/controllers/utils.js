@@ -1,4 +1,5 @@
 const { baseGameObject } = require("../validators/schemas");
+const { validate: isUuid } = require("uuid");
 
 const evaluateGuess = (guess, answer, wordLength) => {
   const result = Array(wordLength).fill("miss");
@@ -104,9 +105,21 @@ const validateSchemaMiddleware = (schema) => {
   };
 };
 
+const validateGameIdMiddleware = (req,res,next) => {
+    console.log("reached validate game id middleware");
+    const gameId = req.params.gameId;
+    if (!isUuid(gameId)) {
+        return res.status(400).json({
+        message: "Invalid game id.",
+        });
+    }
+    next();
+}
+
 module.exports = {
   evaluateGuess,
   validateSchemaMiddleware,
+  validateGameIdMiddleware,
   evaluateGameStatus,
   cheatEvaluate,
 };
