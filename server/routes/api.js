@@ -1,13 +1,21 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { createGame, getGame, guessWord } = require('../controllers/gameController');
-const {validateSchemaMiddleware} = require('../controllers/utils');
-const {guessBodySchema, createGameSchema} = require('../validators/schemas');
+const {
+  createGame,
+  getGame,
+  guessWord,
+} = require("../controllers/gameController");
+const { validateSchemaMiddleware } = require("../controllers/utils");
+const { guessBodySchema, createGameSchema } = require("../validators/schemas");
 
-router.post('/game', validateSchemaMiddleware(createGameSchema),createGame);
+router.post("/game", validateSchemaMiddleware(createGameSchema), createGame);
 
-router.post('/game/:gameId/guess', validateSchemaMiddleware(guessBodySchema), guessWord);
+router.post(
+  "/game/:gameId/guess",
+  validateSchemaMiddleware(guessBodySchema),
+  guessWord,
+);
 
-router.get('/game/:gameId', getGame);
+router.get("/game/:gameId", getGame);
 
 module.exports = router;
