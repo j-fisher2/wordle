@@ -5,7 +5,7 @@ const {
   getGame,
   guessWord,
 } = require("../controllers/gameController");
-const { validateSchemaMiddleware } = require("../controllers/utils");
+const { validateSchemaMiddleware, validateGameIdMiddleware } = require("../controllers/utils");
 const { guessBodySchema, createGameSchema } = require("../validators/schemas");
 
 router.post("/game", validateSchemaMiddleware(createGameSchema), createGame);
@@ -13,9 +13,10 @@ router.post("/game", validateSchemaMiddleware(createGameSchema), createGame);
 router.post(
   "/game/:gameId/guess",
   validateSchemaMiddleware(guessBodySchema),
+  validateGameIdMiddleware,
   guessWord,
 );
 
-router.get("/game/:gameId", getGame);
+router.get("/game/:gameId", validateGameIdMiddleware, getGame);
 
 module.exports = router;
