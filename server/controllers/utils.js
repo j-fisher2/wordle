@@ -85,6 +85,13 @@ function cheatEvaluate(guess, candidates, wordLength) {
   return { pattern: bestPattern, newCandidates: bestWords };
 }
 
+const isPlayersTurn = (playerId, pastGuesses, players) => {
+    if(pastGuesses.length == 0 && players.length > 1){
+        return playerId === players[0]; // host moves first;
+    }
+    return players.length > 1 ? pastGuesses[pastGuesses.length - 1].playerId !== playerId : true
+}
+
 // todo - isolate into middleware directory
 const validateSchemaMiddleware = (schema) => {
   return (req, res, next) => {
@@ -106,7 +113,6 @@ const validateSchemaMiddleware = (schema) => {
 };
 
 const validateGameIdMiddleware = (req,res,next) => {
-    console.log("reached validate game id middleware");
     const gameId = req.params.gameId;
     if (!isUuid(gameId)) {
         return res.status(400).json({
@@ -122,4 +128,5 @@ module.exports = {
   validateGameIdMiddleware,
   evaluateGameStatus,
   cheatEvaluate,
+  isPlayersTurn
 };
