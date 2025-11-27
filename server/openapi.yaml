@@ -22,9 +22,9 @@ paths:
               properties:
                 difficulty:
                   type: string
-                  enum: [normal, hard] # TBD - hard to denote host-cheating mode
+                  enum: [NORMAL, HARD] # TBD - hard to denote host-cheating mode
                   description: Optional difficulty level
-                  default: normal
+                  default: NORMAL
       responses:
         '201':
           description: Game created successfully
@@ -48,7 +48,7 @@ paths:
                     example: "IN_PROGRESS"
                   pastGuesses:
                     type: object
-                    
+
 
   /game/{gameId}/guess:
     post:
