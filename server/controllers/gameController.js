@@ -1,7 +1,12 @@
 const gameStore = require("../store/games");
 const { WORDS, WORD_LENGTH, GUESSES_PER_GAME } = require("../config/config");
 const { v4: uuidv4, validate: isUuid } = require("uuid");
-const { evaluateGuess, evaluateGameStatus, cheatEvaluate, isPlayersTurn } = require("./utils");
+const {
+  evaluateGuess,
+  evaluateGameStatus,
+  cheatEvaluate,
+  isPlayersTurn,
+} = require("./utils");
 const { pl } = require("zod/v4/locales");
 
 // abstract function - update to use centralized data/key-value store
@@ -35,12 +40,12 @@ const createGame = (req, res) => {
     pastGuesses: game.pastGuesses,
     difficulty: game.difficulty,
     players: game.players,
-    playerId: hostPlayerId
+    playerId: hostPlayerId,
   });
 };
 
 const guessWord = (req, res) => {
-  const {guess, playerId} = req.body;
+  const { guess, playerId } = req.body;
   const gameId = req.params.gameId;
 
   const game = fetchGame(gameId);
@@ -52,10 +57,13 @@ const guessWord = (req, res) => {
       message: `Guess must be ${game.wordLength} letters long.`,
     });
   }
-  if(!game.players.includes(playerId) || !isPlayersTurn(playerId, game.pastGuesses, game.players)){
+  if (
+    !game.players.includes(playerId) ||
+    !isPlayersTurn(playerId, game.pastGuesses, game.players)
+  ) {
     return res.status(401).json({
-      message: "Player is not allowed to guess in this game or turn"
-    })
+      message: "Player is not allowed to guess in this game or turn",
+    });
   }
 
   const remainingAttempts = game.maxAttempts - (game.pastGuesses?.length || 0);
@@ -117,14 +125,23 @@ const joinGame = (req, res) => {
   if (!game || game == {}) {
     return res.status(404).json({ message: "Game not found." });
   }
-  if(game.players.length > 1){
-    return res.status(409).json({message: "Game already has two players."})
+  if (game.players.length > 1) {
+    return res.status(409).json({ message: "Game already has two players." });
   }
 
   game.players.push(joiningPlayerId);
 
-  return res.json({playerId: joiningPlayerId, gameId: gameId, pastGuesses: game.pastGuesses, remainingAttempts: game.remainingAttempts, difficulty: game.difficulty, players: game.players})
-  
-}
+  return res.json({
+    playerId: joiningPlayerId,
+    gameId: gameId,
+    pastGuesses: game.pastGuesses,
+    remainingAttempts: game.remainingAttempts,
+    difficulty: game.difficulty,
+    players: game.players,
+    wordLength: game.wordLength,
+    maxAttempts: game.maxAttempts,
+    status: game.status,
+  });
+};
 
 module.exports = { createGame, guessWord, getGame, joinGame };

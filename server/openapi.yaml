@@ -210,7 +210,7 @@ paths:
                     type: string
                     format: uuid
                     example: "bd444899-4851-4530-90ef-aa53ca025c01"
-                  game: 
+                  game:
                     type: object
                     properties:
                       gameId:

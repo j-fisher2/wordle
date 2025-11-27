@@ -86,11 +86,13 @@ function cheatEvaluate(guess, candidates, wordLength) {
 }
 
 const isPlayersTurn = (playerId, pastGuesses, players) => {
-    if(pastGuesses.length == 0 && players.length > 1){
-        return playerId === players[0]; // host moves first;
-    }
-    return players.length > 1 ? pastGuesses[pastGuesses.length - 1].playerId !== playerId : true
-}
+  if (pastGuesses.length == 0 && players.length > 1) {
+    return playerId === players[0]; // host moves first;
+  }
+  return players.length > 1
+    ? pastGuesses[pastGuesses.length - 1].playerId !== playerId
+    : true;
+};
 
 // todo - isolate into middleware directory
 const validateSchemaMiddleware = (schema) => {
@@ -112,15 +114,15 @@ const validateSchemaMiddleware = (schema) => {
   };
 };
 
-const validateGameIdMiddleware = (req,res,next) => {
-    const gameId = req.params.gameId;
-    if (!isUuid(gameId)) {
-        return res.status(400).json({
-        message: "Invalid game id.",
-        });
-    }
-    next();
-}
+const validateGameIdMiddleware = (req, res, next) => {
+  const gameId = req.params.gameId;
+  if (!isUuid(gameId)) {
+    return res.status(400).json({
+      message: "Invalid game id.",
+    });
+  }
+  next();
+};
 
 module.exports = {
   evaluateGuess,
@@ -128,5 +130,5 @@ module.exports = {
   validateGameIdMiddleware,
   evaluateGameStatus,
   cheatEvaluate,
-  isPlayersTurn
+  isPlayersTurn,
 };
