@@ -23,3 +23,7 @@
 .difficulty-select * {
     display: block;
 }
+
+.lower-button {
+    margin-top: 1rem;
+}
