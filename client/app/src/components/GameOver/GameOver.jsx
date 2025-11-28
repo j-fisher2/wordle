@@ -9,7 +9,7 @@ const GameOver = ({message, setGameState, gameState}) => {
                 <div key={playerId}>Opponent score: {score}</div>
             )
         )}
-      <button style={{ marginTop: "1rem" }} onClick={() => setGameState(null)}>Play Again</button>
+      <button style={{ marginTop: "1rem" }} onClick={() => setGameState(null)}>New Game</button>
     </div>
   )
 }
