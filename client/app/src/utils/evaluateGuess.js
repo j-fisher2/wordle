@@ -67,7 +67,7 @@ export default async function evaluateGuessSubmission(guess, answer, wordLength,
     const result = await evaluateGuess(guess,answer,wordLength,online, API_ENDPOINT);
     if(result){
         const newGuesses = [...gameState.pastGuesses, { guess: guess, result: result.result }];
-        const gameStatus = online ? result.gameStatus : (newGuesses.length >= gameState.maxAttempts ? "LOSS" : result.gameStatus == "WIN" ? "WIN" : "IN_PROGRESS")
+        const gameStatus = online ? result.status : (newGuesses.length >= gameState.maxAttempts ? "LOSS" : result.status == "WIN" ? "WIN" : "IN_PROGRESS")
         setGameState({...gameState, pastGuesses: newGuesses, message: gameStatus === "WIN" ? "You win! 🎉" : gameStatus === "LOSS" ? "Out of guesses!" : "",currentGuess: "", status: gameStatus, scores: result.scores })
     }
 
