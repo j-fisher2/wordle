@@ -1,3 +1,5 @@
+import { toast } from "sonner";
+
 async function evaluateGuess(guess, answer, wordLength, online, APIEndpoint) {
 
     if(answer || !online){
@@ -32,8 +34,13 @@ async function evaluateGuess(guess, answer, wordLength, online, APIEndpoint) {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ guess })
+                body: JSON.stringify({ guess: guess, playerId: localStorage.getItem("playerId") })
                 });
+                if (!res.ok) {
+                    const errorData = await res.json().catch(() => null);
+                    toast.error(errorData?.message || "Unknown error");
+                    return null;
+                  }
             const data = await res.json();
             return data;
         } catch (err) {
@@ -58,9 +65,10 @@ export default async function evaluateGuessSubmission(guess, answer, wordLength,
     const API_ENDPOINT = `${import.meta.env.VITE_API_URL}/game/${gameState.gameId}/guess`
 
     const result = await evaluateGuess(guess,answer,wordLength,online, API_ENDPOINT);
-
-    const newGuesses = [...gameState.pastGuesses, { guess: guess, result: result.result }];
-    const gameStatus = online ? result.gameStatus : (newGuesses.length >= gameState.maxAttempts ? "LOSS" : result.gameStatus == "WIN" ? "WIN" : "IN_PROGRESS")
-    setGameState({...gameState, pastGuesses: newGuesses, message: gameStatus === "WIN" ? "You win! 🎉" : gameStatus === "LOSS" ? "Out of guesses!" : "",currentGuess: "", status: gameStatus })
+    if(result){
+        const newGuesses = [...gameState.pastGuesses, { guess: guess, result: result.result }];
+        const gameStatus = online ? result.gameStatus : (newGuesses.length >= gameState.maxAttempts ? "LOSS" : result.gameStatus == "WIN" ? "WIN" : "IN_PROGRESS")
+        setGameState({...gameState, pastGuesses: newGuesses, message: gameStatus === "WIN" ? "You win! 🎉" : gameStatus === "LOSS" ? "Out of guesses!" : "",currentGuess: "", status: gameStatus, scores: result.scores })
+    }
 
 }
