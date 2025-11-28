@@ -22,7 +22,9 @@ export default function Game({ evaluateGuessSubmission, gameState ,setGameState,
         console.error("Network error:", err);
       }
     };
-    
+    if(!isOnline){
+        return;
+    }
     fetchGameState();
 
     const interval = setInterval(fetchGameState, 3000);
