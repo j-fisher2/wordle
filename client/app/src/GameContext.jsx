@@ -40,7 +40,7 @@ export const GameProvider = ({ children }) => {
               toast.error("Oops.. hard mode is available online only");
               return;
             }
-            const offlineState = { ...defaultOfflineState, gameWord: GAME_CONFIG.WORDS[Math.floor(Math.random() * GAME_CONFIG.WORDS.length)]};
+            const offlineState = { ...defaultOfflineState, gameWord: GAME_CONFIG.WORDS[Math.floor(Math.random() * GAME_CONFIG.WORDS.length)], maxAttempts: GAME_CONFIG.MAX_GUESSES, wordLength: GAME_CONFIG.WORD_LENGTH};
             setGameState(offlineState);
         }
   };
