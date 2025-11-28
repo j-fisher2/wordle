@@ -11,7 +11,8 @@ const defaultOfflineState = {
   pastGuesses: [],
   status: "IN_PROGRESS",
   message: "",
-  difficulty: "NORMAL"
+  difficulty: "NORMAL",
+  scores: {}
 };
 
 export const GameProvider = ({ children }) => {

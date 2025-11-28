@@ -25,7 +25,7 @@ async function evaluateGuess(guess, answer, wordLength, online, APIEndpoint) {
             }
         }
         const hasWon = result.every(el => el === "hit");
-        return {result: result, gameStatus: hasWon ? "WIN" : "IN_PROGRESS"};
+        return {result: result, gameStatus: hasWon ? "WIN" : "IN_PROGRESS", scores: {}};
     }
     else {
         try {
