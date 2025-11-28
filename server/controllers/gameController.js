@@ -1,5 +1,10 @@
 const gameStore = require("../store/games");
-const { WORDS, WORD_LENGTH, GUESSES_PER_GAME } = require("../config/config");
+const {
+  WORDS,
+  WORD_LENGTH,
+  GUESSES_PER_GAME,
+  SCORES,
+} = require("../config/config");
 const { v4: uuidv4, validate: isUuid } = require("uuid");
 const {
   evaluateGuess,
@@ -7,7 +12,6 @@ const {
   cheatEvaluate,
   isPlayersTurn,
 } = require("./utils");
-const { pl } = require("zod/v4/locales");
 
 // abstract function - update to use centralized data/key-value store
 const fetchGame = (gameId) => {
@@ -28,7 +32,8 @@ const createGame = (req, res) => {
     pastGuesses: [],
     difficulty: difficulty,
     candidateWords: difficulty === "HARD" ? WORDS : [],
-    players: [hostPlayerId], // host player id always first, players.length > 1 -> implicit multiplayer mode
+    players: [hostPlayerId],
+    scores: {},
   };
   gameStore.set(gameId, game);
 
@@ -89,6 +94,16 @@ const guessWord = (req, res) => {
     guessEvaluation = evaluateGuess(guess, gameWord, WORD_LENGTH, difficulty);
   }
 
+  const guessScore = guessEvaluation.reduce(
+    (sum, item) => sum + (SCORES[item] ?? 0),
+    0,
+  );
+  game.scores = {
+    ...game.scores,
+    [playerId]: (game.scores[playerId] ?? 0) + guessScore,
+  };
+  console.log(game.scores);
+
   game.pastGuesses = [
     ...(game.pastGuesses || []),
     { guess: guess, result: guessEvaluation, playerId: playerId },
@@ -100,7 +115,8 @@ const guessWord = (req, res) => {
     gameId: gameId,
     result: guessEvaluation,
     remainingAttempts: remainingAttempts - 1,
-    gameStatus: game.status,
+    status: game.status,
+    scores: game.scores,
   });
 };
 
@@ -115,6 +131,8 @@ const getGame = (req, res) => {
     pastGuesses: game.pastGuesses,
     remainingAttempts: game.remainingAttempts,
     difficulty: game.difficulty,
+    status: game.status,
+    scores: game.scores,
   });
 };
 
