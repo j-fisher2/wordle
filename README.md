@@ -28,7 +28,7 @@ Follow the reference game's logic for exact behavior.
 - For each user guess:
     1. Compare each letter to the answer to determine if it is a Hit, Present, or Miss.
     2. Return the result as an array to update the client state and UI.
-- If the number of guesses exceeds the configured limit **or** the user guesses correctly, navigate to the game over state.
+- If the number of guesses exceeds the configured limit **or** the user guesses correctly, navigate to the game end state/component.
 
 ---
 
@@ -45,9 +45,9 @@ Based on Task 1, modify the solution to support a **client-server model**. Scori
 ### Approach
 
 - Client sends guesses to the server via API calls.
-- Server evaluates each guess and returns scoring results.
+- Server evaluates each guess and returns scoring results after performing request body input validation.
 - Server maintains game state, including the number of guesses and whether the game is over.
-- Client updates the UI based on server responses and handles game over or win states.
+- Client updates the UI and its internal state based on server responses and handles game over or win states.
 
 
 ## Task 3: Host cheating wordle
@@ -120,7 +120,7 @@ The solution is expected:
 
 - Ensure **turn-based enforcement** so players cannot guess out of turn.  
 - Keep **game state centralized on the server** for consistency across clients.  
-- Ephemeral player IDs prevent cheating and allow multiple players to join without sharing sensitive identifiers.  
+- Ephemeral player IDs prevent cheating and allow multiple players to join without sharing identifiers.  
 
 ### Design Trade-offs
 
@@ -142,11 +142,11 @@ The solution is expected:
 
 #### 3. Ephemeral Player IDs
 - **Pros:**  
-  - Prevents cheating by obscuring who is who.  
+  - Prevents cheating by obscuring who is who (**update server side logic to avoid sending player list).  
   - Allows multiple players to join without exposing sensitive identifiers.  
   - Quick and easy no-sign-up process to begin playing game
 - **Cons:**  
-  - Requires careful handling of session lifecycle to avoid orphaned game IDs.  
+  - Requires careful handling of session lifecycle to avoid orphaned IDs.  
 
 #### 4. Centralized Game State on Server
 - **Pros:**  
@@ -175,7 +175,7 @@ The solution is expected:
   - This design balances **fair gameplay** with a **good user experience**, keeping competitive play engaging.
 
 - **Toast Notifications for UI/UX**  
-  - Provides real-time, **non-intrusive feedback** for events such as invalid guesses, game-over messages, or turn notifications.  
+  - Provides real-time, **non-intrusive feedback** for events such as invalid guesses, or turn notifications.  
   - Improves **user awareness** without cluttering the interface.
 
 - **Task 4: Join a Friend’s Game**  
