@@ -7,6 +7,10 @@
   height: 100vh;
 }
 
+.container > {
+  padding: 3rem;
+}
+
 .grid {
   display: flex;
   flex-direction: column;
