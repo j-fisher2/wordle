@@ -106,4 +106,10 @@ const WORD_LENGTH = WORDS[0].length || process.env.WORD_LENGTH;
 
 const GUESSES_PER_GAME = parseInt(process.env.GUESSES_PER_GAME);
 
-module.exports = { WORDS, WORD_LENGTH, GUESSES_PER_GAME };
+const SCORES = {
+  hit: 2,
+  present: 1,
+  miss: 0,
+};
+
+module.exports = { WORDS, WORD_LENGTH, GUESSES_PER_GAME, SCORES };
