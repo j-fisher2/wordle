@@ -27,7 +27,7 @@ export default function Game({ evaluateGuessSubmission, gameState ,setGameState,
     }
     fetchGameState();
 
-    const interval = setInterval(fetchGameState, 3000);
+    const interval = setInterval(fetchGameState, 2000);
 
     return () => clearInterval(interval);
   }, []);
