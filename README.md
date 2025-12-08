@@ -1,5 +1,3 @@
-**Author:** Justin Fisher - justinfisher340@gmail.com
-
 ## Task 1: Normal Wordle
 
 The game will select a **5-letter word** (the "answer") from a predefined, configurable word list. All words are expected to consist of English letters only and are case-insensitive.
